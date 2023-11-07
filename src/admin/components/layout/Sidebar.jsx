@@ -11,7 +11,6 @@ import {
   RiArrowDropUpLine,
   RiKeyboardLine,
   RiSlideshowLine,
-  RiUser3Line,
 } from "react-icons/ri";
 import { BiCategoryAlt, BiCategory } from "react-icons/bi";
 import { LiaProductHunt } from "react-icons/lia";
@@ -67,7 +66,7 @@ export const Sidebar = () => {
               to="/users"
               className="flex items-center gap-4 text-white py-2 px-4 rounded-xl hover:bg-primary-900/50 transition-colors"
             >
-              <RiUser3Line /> Usuarios
+              <RiHome3Line /> Usuarios
             </Link>
             <Link
               to="/"

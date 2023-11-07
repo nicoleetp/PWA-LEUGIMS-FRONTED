@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 // api
 import { getAllUsers } from "api/userApi";
 // componentes
-import { ListUsers, Loader } from "admin/components";
+import { ListUsers } from "admin/components";
 // iconos
 import { BsPersonAdd } from "react-icons/bs";
 import { Link } from "react-router-dom";
@@ -27,13 +27,13 @@ export const UserView = () => {
   }, []);
 
   if (loading) {
-    return <Loader />;
+    return <div>Cargando...</div>;
   }
 
   return (
     <div className=" bg-white p-5 rounded-xl shadow-lg my-10">
-      <div className="flex items-center flex-col md:flex-row justify-between mb-5">
-        <h1 className="mb-5 font-extrabold text-xl md:text-3xl text-gray-700 uppercase">
+      <div className="flex items-center justify-between mb-5">
+        <h1 className="mb-5 font-extrabold text-3xl text-gray-700 uppercase">
           Usuarios registrados
         </h1>
 

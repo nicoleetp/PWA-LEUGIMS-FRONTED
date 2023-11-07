@@ -1,13 +1,13 @@
 import { Navigate, Outlet, useNavigate } from "react-router-dom";
 // componentes
-import { Header, Loader, Sidebar } from "admin/components";
+import { Header, Sidebar } from "admin/components";
 import { useAuth } from "hooks/useAuth";
 
 export const AdminLayout = () => {
   const { user, load } = useAuth();
 
   if (load) {
-    return <Loader />;
+    return "cargando...";
   }
 
   return (

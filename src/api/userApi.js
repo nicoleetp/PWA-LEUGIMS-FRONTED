@@ -21,13 +21,7 @@ export const getUserById = async (userId) => {
 
 export const registerUser = async (userData) => {
     try {
-        const token = localStorage.getItem("token_sesion");
-        const config = {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        };
-        const response = await clienteAxios.post("/user", userData, config);
+        const response = await clienteAxios.post("/user", userData);
         return response.data;
     } catch (error) {
         throw error;
