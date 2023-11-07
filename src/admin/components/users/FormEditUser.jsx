@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { Link, useNavigate } from "react-router-dom";
-import { registerUser } from "api/userApi";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { getUserById, updateUser } from "api/userApi";
 import { Input } from "../form/Input";
 
-export const FormUser = () => {
+export const FormEditUser = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
+
   const [userData, setUserData] = useState({
     name: "",
     lastname: "",
@@ -16,6 +18,27 @@ export const FormUser = () => {
     password: "",
   });
 
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const response = await getUserById(id);
+        setUserData({
+          name: response.name || "",
+          lastname: response.lastname || "",
+          dni: response.dni || "",
+          phone: response.phone || "",
+          address: response.address || "",
+          email: response.email || "",
+          password: response.password || "",
+        });
+      } catch (error) {
+        toast.warn(error?.response?.data?.error);
+      }
+    };
+
+    loadUser();
+  }, [id]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setUserData({ ...userData, [name]: value });
@@ -24,9 +47,22 @@ export const FormUser = () => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await registerUser(userData);
+      const dataToUpdate = {
+        name: userData.name,
+        lastname: userData.lastname,
+        dni: userData.dni,
+        phone: userData.phone,
+        address: userData.address,
+        email: userData.email,
+      };
+
+      if (userData.password) {
+        dataToUpdate.password = userData.password;
+      }
+
+      const response = await updateUser(id, dataToUpdate);
       toast.success(
-        `El usuario ${response.name.toUpperCase()} fue registrado correctamente`
+        `El usuario ${response.user.name.toUpperCase()} fue actualizado correctamente`
       );
       navigate("/users");
     } catch (error) {
@@ -98,14 +134,14 @@ export const FormUser = () => {
 
         <div className="mt-5 flex items-center gap-5">
           <button
-            className="bg-indigo-500 text-white uppercase font-medium py-3 px-10 rounded-lg hover:bg-indigo-600 transition-colors duration-500 ease-out cursor-pointer"
+            className="bg-indigo-500 text-white uppercase font-medium py-3 px-10 rounded-lg hover-bg-indigo-600 transition-colors duration-500 ease-out cursor-pointer"
             type="submit"
           >
-            Registrar
+            Actualizar
           </button>
           <Link
             to="/users"
-            className="bg-red-500 text-white uppercase font-medium py-3 px-10 rounded-lg hover:bg-red-600 transition-colors duration-500 ease-out cursor-pointer"
+            className="bg-red-500 text-white uppercase font-medium py-3 px-10 rounded-lg hover-bg-red-600 transition-colors duration-500 ease-out cursor-pointer"
           >
             Cancelar
           </Link>

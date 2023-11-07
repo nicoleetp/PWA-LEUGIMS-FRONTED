@@ -3,7 +3,7 @@ import { AuthLayout } from "auth/layouts/AuthLayout";
 import { LoginPage } from "auth/pages/LoginPage";
 import { AdminLayout } from "admin/layouts/AdminLayout";
 import { Dashboard, Users } from "admin/pages";
-import { NewUser } from "admin/views";
+import { NewUser, EditUser } from "admin/views";
 
 export const MyRoutes = () => {
   return (
@@ -19,6 +19,7 @@ export const MyRoutes = () => {
           <Route index element={<Dashboard />} />
           <Route path="/users" element={<Users />} />
           <Route path="/new-user" element={<NewUser />} />
+          <Route path="/user/:id" element={<EditUser />} />
         </Route>
       </Routes>
     </BrowserRouter>

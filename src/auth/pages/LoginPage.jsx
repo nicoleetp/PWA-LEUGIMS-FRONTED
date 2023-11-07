@@ -3,17 +3,69 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { login } from "api/authApi";
 import { useAuth } from "hooks/useAuth";
-// hooks
 
 export const LoginPage = () => {
-  const { signIn } = useAuth() || [];
+  const { signIn } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
+  const isEmailValid = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
+  const isPasswordValid =
+    /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!_%*?&])[A-Za-z\d@$!_%*?&]{6,}$/;
+
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  const handleEmailChange = (e) => {
+    const newEmail = e.target.value;
+    setEmail(newEmail);
+
+    if (!isEmailValid.test(newEmail)) {
+      setEmailError("Correo electrónico inválido");
+    } else {
+      setEmailError("");
+    }
+  };
+
+  const handlePasswordChange = (e) => {
+    const newPassword = e.target.value;
+    setPassword(newPassword);
+
+    const passwordErrors = [];
+
+    if (newPassword.length < 6) {
+      passwordErrors.push("La contraseña debe tener al menos 6 caracteres.");
+    }
+
+    if (!/[A-Z]/.test(newPassword)) {
+      passwordErrors.push(
+        "La contraseña debe contener al menos una letra mayúscula."
+      );
+    }
+
+    if (!/\d/.test(newPassword)) {
+      passwordErrors.push("La contraseña debe contener al menos un número.");
+    }
+
+    if (!/[@$!_%*?&]/.test(newPassword)) {
+      passwordErrors.push(
+        "La contraseña debe contener al menos un carácter especial (@$!_%*?&)."
+      );
+    }
+
+    setPasswordError(passwordErrors.join("\n"));
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    if (!isEmailValid.test(email) || !isPasswordValid.test(password)) {
+      toast.warn("Por favor, corrige los errores en el formulario.");
+      return;
+    }
+
     try {
       const user = await login(email, password);
 
@@ -43,11 +95,14 @@ export const LoginPage = () => {
             </label>
             <input
               type="text"
-              className="border-2 border-gray-300 w-full p-2 rounded-xl outline-none focus:border-gray-400"
+              className={`border-2 w-full p-2 rounded-xl outline-none focus:border-gray-400 ${
+                emailError ? "border-red-500" : "border-gray-300"
+              }`}
               placeholder="leugims@correo.com"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleEmailChange}
             />
+            {emailError && <span className="text-red-500">{emailError}</span>}
           </div>
           <div className="mt-5 flex flex-col gap-2">
             <label htmlFor="" className="text-gray-600 uppercase font-bold">
@@ -55,11 +110,20 @@ export const LoginPage = () => {
             </label>
             <input
               type="password"
-              className="border-2 border-gray-300 w-full p-2 rounded-xl outline-none focus:border-gray-400"
+              className={`border-2 w-full p-2 rounded-xl outline-none focus:border-gray-400 ${
+                passwordError ? "border-red-500" : "border-gray-300"
+              }`}
               placeholder="*************"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handlePasswordChange}
             />
+            {passwordError && (
+              <span className="text-red-500">
+                {passwordError.split("\n").map((error, index) => (
+                  <div key={index}>{error}</div>
+                ))}
+              </span>
+            )}
           </div>
 
           <input

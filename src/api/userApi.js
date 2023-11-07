@@ -36,7 +36,13 @@ export const registerUser = async (userData) => {
 
 export const updateUser = async (userId, userData) => {
     try {
-        const response = await clienteAxios.put(`/user/${userId}`, userData);
+        const token = localStorage.getItem("token_sesion");
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        };
+        const response = await clienteAxios.put(`/user/${userId}`, userData, config);
         return response.data;
     } catch (error) {
         throw error;

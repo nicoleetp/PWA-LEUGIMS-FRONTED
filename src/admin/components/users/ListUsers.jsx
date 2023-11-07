@@ -74,7 +74,7 @@ export const ListUsers = ({ users }) => {
                       </button>
                     )}
                     <Link
-                      to=""
+                      to={`/user/${_id}`}
                       className="w-7 h-7 text-xs bg-indigo-500 rounded-2xl text-white hover:bg-indigo-600 duration-500 ease-out flex items-center justify-center"
                     >
                       <FaRegEdit />
