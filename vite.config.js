@@ -18,6 +18,8 @@ export default defineConfig({
       "views": path.resolve(__dirname, "src/views"),
       "routes": path.resolve(__dirname, "src/routes"),
       "styles": path.resolve(__dirname, "src/styles"),
+      "auth": path.resolve(__dirname, "src/auth"),
+      "admin": path.resolve(__dirname, "src/admin"),
     },
   },
 });
