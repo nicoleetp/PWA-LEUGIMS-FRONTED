@@ -1,14 +1,24 @@
+import { useState } from "react";
 import { FaRegTrashAlt, FaRegEdit, FaRegEye } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 // api
 import { deleteUser } from "api/userApi";
+// hooks
+import { useAuth } from "hooks/useAuth";
 
 export const ListUsers = ({ users }) => {
+  const { user } = useAuth();
+  const [userList, setUserList] = useState(users);
+
   const handleDeleteUser = async (userId) => {
     try {
       const result = await deleteUser(userId);
       toast.success(result?.message);
+
+      // Actualiza la lista después de eliminar el usuario
+      const updatedUserList = userList.filter((user) => user._id !== userId);
+      setUserList(updatedUserList);
     } catch (error) {
       console.log(error);
       toast.warn(error?.response?.data?.error);
@@ -38,29 +48,31 @@ export const ListUsers = ({ users }) => {
           </tr>
         </thead>
         <tbody>
-          {users.map((user) => (
-            <tr key={user._id} className="bg-white">
+          {userList.map(({ _id, name, lastname, dni, phone, email }) => (
+            <tr key={_id} className="bg-white">
               <td className="px-6 py-4 text-sm leading-5 text-gray-900 font-medium capitalize">
-                {user.name} {user.lastname}
+                {name} {lastname}
               </td>
               <td className="px-6 py-4 text-sm leading-5 text-gray-900">
-                {user.dni}
+                {dni}
               </td>
               <td className="px-6 py-4 text-sm leading-5 text-gray-900">
-                {user.phone}
+                {phone}
               </td>
               <td className="px-6 py-4 text-sm leading-5 text-gray-900">
-                {user.email}
+                {email}
               </td>
               <td className="px-6 py-4 text-sm leading-5 text-gray-900 flex items-center gap-2">
-                {user.name != "Admin" && (
+                {name != "Admin" && (
                   <>
-                    <button
-                      onClick={() => handleDeleteUser(user._id)}
-                      className="w-7 h-7 text-xs bg-red-500 rounded-2xl text-white hover:bg-red-600 duration-500 ease-out flex items-center justify-center"
-                    >
-                      <FaRegTrashAlt />
-                    </button>
+                    {_id !== user.userId && (
+                      <button
+                        onClick={() => handleDeleteUser(_id)}
+                        className="w-7 h-7 text-xs bg-red-500 rounded-2xl text-white hover:bg-red-600 duration-500 ease-out flex items-center justify-center"
+                      >
+                        <FaRegTrashAlt />
+                      </button>
+                    )}
                     <Link
                       to=""
                       className="w-7 h-7 text-xs bg-indigo-500 rounded-2xl text-white hover:bg-indigo-600 duration-500 ease-out flex items-center justify-center"
