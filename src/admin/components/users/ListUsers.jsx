@@ -6,16 +6,20 @@ import { toast } from "react-toastify";
 import { deleteUser } from "api/userApi";
 // hooks
 import { useAuth } from "hooks/useAuth";
+import { useAdmin } from "hooks/useAdmin";
+import { ModalProfile } from "../modals/users/ModalProfile";
 
 export const ListUsers = ({ users }) => {
   const { user } = useAuth();
+  const { isOpen, onOpenModal } = useAdmin();
   const [userList, setUserList] = useState(users);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedUserId, setSelectedUserId] = useState(null);
 
   const handleDeleteUser = async (userId) => {
     try {
       const result = await deleteUser(userId);
       toast.success(result?.message);
-
       // Actualiza la lista después de eliminar el usuario
       const updatedUserList = userList.filter((user) => user._id !== userId);
       setUserList(updatedUserList);
@@ -23,6 +27,13 @@ export const ListUsers = ({ users }) => {
       console.log(error);
       toast.warn(error?.response?.data?.error);
     }
+  };
+
+  const openModalWithUser = (userId) => {
+    const user = userList.find((user) => user._id === userId);
+    setSelectedUser(user);
+    setSelectedUserId(userId);
+    onOpenModal();
   };
 
   return (
@@ -81,7 +92,10 @@ export const ListUsers = ({ users }) => {
                     </Link>
                   </>
                 )}
-                <button className="w-7 h-7 text-xs bg-pink-500 rounded-2xl text-white hover:bg-pink-600 duration-500 ease-out flex items-center justify-center">
+                <button
+                  onClick={() => openModalWithUser(_id)}
+                  className="w-7 h-7 text-xs bg-pink-500 rounded-2xl text-white hover:bg-pink-600 duration-500 ease-out flex items-center justify-center"
+                >
                   <FaRegEye />
                 </button>
               </td>
@@ -89,6 +103,14 @@ export const ListUsers = ({ users }) => {
           ))}
         </tbody>
       </table>
+
+      {selectedUserId && (
+        <ModalProfile
+          isOpen={isOpen}
+          user={selectedUser}
+          onClose={() => setSelectedUserId(null)}
+        />
+      )}
     </div>
   );
 };
